@@ -4,11 +4,11 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-_COLLECTIVE_COMMUNICATION_OPTIONS = {
-    None: tf.distribute.experimental.CollectiveCommunication.AUTO,
-    "ring": tf.distribute.experimental.CollectiveCommunication.RING,
-    "nccl": tf.distribute.experimental.CollectiveCommunication.NCCL
-}
+# _COLLECTIVE_COMMUNICATION_OPTIONS = {
+#     None: tf.distribute.experimental.CollectiveCommunication.AUTO,
+#     "ring": tf.distribute.experimental.CollectiveCommunication.RING,
+#     "nccl": tf.distribute.experimental.CollectiveCommunication.NCCL
+# }
 
 def get_distribution_strategy(distribution_strategy='default',
                               num_gpus=0,

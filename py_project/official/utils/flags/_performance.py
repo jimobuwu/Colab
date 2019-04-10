@@ -19,4 +19,29 @@ def define_performance(num_parallel_calls=True, inter_op=True, intra_op=True,
                            "should be approximately the number of available CPU "
                            "cores. (default behavior)"))
 
+    if inter_op:
+        flags.DEFINE_integer(
+            name="inter_op_parallelism_threads", short_name="inter", default=0,
+            help=help_wrap("Number of inter_op_parallelism_threads to use for CPU. "
+                           "See TensorFlow config.proto for details.")
+        )
+
+    if intra_op:
+        flags.DEFINE_integer(
+            name="intra_op_parallelism_threads", short_name="intra", default=0,
+            help=help_wrap("Number of intra_op_parallelism_threads to use for CPU. "
+                           "See TensorFlow config.proto for details."))
+
+    if all_reduce_alg:
+        flags.DEFINE_string(
+            name="all_reduce_alg", short_name="ara", default=None,
+            help=help_wrap("Defines the algorithm to use for performing all-reduce."
+                           "When specified with MirroredStrategy for single "
+                           "worker, this controls "
+                           "tf.contrib.distribute.AllReduceCrossTowerOps.  When "
+                           "specified with MultiWorkerMirroredStrategy, this "
+                           "controls "
+                           "tf.distribute.experimental.CollectiveCommunication; "
+                           "valid options are `ring` and `nccl`."))
+
     return key_flags
