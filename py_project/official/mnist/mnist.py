@@ -23,7 +23,7 @@ def create_model(data_format):
 
     l = tf.keras.layers
     max_pool = l.MaxPooling2D(
-        (2,2), (2,2), padding='same', data_format=data_format)
+        (2, 2), (2, 2), padding='same', data_format=data_format)
     return tf.keras.Sequential(
         [
             l.Reshape(
@@ -133,14 +133,15 @@ def run_mnist(flags_obj):
 
     data_format = flags_obj.data_format
     if data_format is None:
-        data_format = ('channels_first' if tf.test.is_built_with_cuda() else 'channels_last')
+        # data_format = ('channels_first' if tf.test.is_built_with_cuda() else 'channels_last')
+        data_format = 'channels_last'
 
     mnist_classifier = tf.estimator.Estimator(
         model_fn=model_function,
         model_dir=flags_obj.model_dir,
         config=run_config,
         params={
-            'data_format':data_format
+            'data_format': data_format
         })
 
     def train_input_fn():
