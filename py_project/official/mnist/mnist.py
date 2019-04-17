@@ -176,8 +176,47 @@ def run_mnist(flags_obj):
         mnist_classifier.export_savedmodel(flags_obj.export_dir, input_fn, strip_default_attrs=True)
 
 
+def predict_mnist(flags_obj):
+    session_config = tf.ConfigProto(
+        inter_op_parallelism_threads=flags_obj.inter_op_parallelism_threads,
+        intra_op_parallelism_threads=flags_obj.intra_op_parallelism_threads,
+        allow_soft_placement=True)
+
+    distribution_strategy = distribution_utils.get_distribution_strategy(
+        distribution_strategy=flags_obj.distribution_strategy,
+        num_gpus=flags_core.get_num_gpus(flags_obj),
+        all_reduce_alg=flags_obj.all_reduce_alg)
+
+    run_config = tf.estimator.RunConfig(
+        train_distribute=distribution_strategy, session_config=session_config)
+
+    data_format = flags_obj.data_format
+    if data_format is None:
+        # data_format = ('channels_first' if tf.test.is_built_with_cuda() else 'channels_last')
+        data_format = 'channels_last'
+
+    classifier = tf.estimator.Estimator(
+        model_fn=model_fn,
+        model_dir=flags_obj.model_dir,
+        config=run_config,
+        params={
+            'data_format': data_format
+        })
+
+    def predict_input_fn():
+        return dataset.test(flags_obj.data_dir).batch(1)
+
+    predictions = classifier.predict(
+        input_fn=predict_input_fn)
+
+    for v in predictions:
+        print(v['classes'])
+
+
+
 def main(_):
-    run_mnist(flags.FLAGS)
+    # run_mnist(flags.FLAGS)
+    predict_mnist(flags.FLAGS)
 
 
 if __name__ == '__main__':
